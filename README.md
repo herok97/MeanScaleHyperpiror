@@ -13,8 +13,7 @@ I wrote this with reference to the following two codes.
 <br>
 
 ## Dataset
-Dataset directory structure.
-
+(In root, create dataset directory structure below.)
 ```
 ├─data
 │  ├─train
