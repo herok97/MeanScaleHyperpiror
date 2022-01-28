@@ -28,7 +28,7 @@ For validation, you can use any dataset and it is not necessary. (It's not bad c
 
 
 ## Training
-You can train the model with command 'CUDA_VISIBLE_DEVICES='your gpu num' train.py' at the root directory, so that train.py creates 'solver' class and call the method 'train'.
+You can train the model with command `C0UDA_VISIBLE_DEVICES={gpu num} train.py` at the root directory, so that train.py creates 'solver' class and call the method 'train'.
 Before that, you have to modify the config.py to suit your purpose.
 
 ## Evaluation
