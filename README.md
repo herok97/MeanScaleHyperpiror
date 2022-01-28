@@ -4,7 +4,8 @@ original paper: http://arxiv.org/abs/1809.02736
 
 ## Introduction
 
-**This repository is the implementation of training and evaluation code for the model above.**
+**This repository is the implementation of training and evaluation code for the model above. It was written in advance to expand this repository through further research.
+**
 <br>
 
 I wrote this with reference to the following two codes. 
@@ -28,7 +29,7 @@ For validation, you can use any dataset and it is not necessary. (It's not bad c
 
 
 ## Training
-You can train the model with command `C0UDA_VISIBLE_DEVICES={gpu num} train.py` at the root directory, so that train.py creates 'solver' class and call the method 'train'.
-Before that, you have to modify the config.py to suit your purpose.
+You can train the model with command `CUDA_VISIBLE_DEVICES={gpu num} python train.py` at the root directory, so that train.py creates `Solver` class and call the method `train`.
+Before that, you have to modify the `config.py` to suit your purpose.
 
 ## Evaluation
