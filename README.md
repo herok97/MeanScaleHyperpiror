@@ -32,7 +32,7 @@ I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different mo
 └ ...
 ```
 
-I used Flicker2W, DIV2K and CLIC2020's for training.
+I used Flicker2W, DIV2K and CLIC2020 for training.
 - Flicker2W dataset can be found on [liujiaheng's repository](https://github.com/liujiaheng/compression)
 - 'Train data (HR images)' in [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/)
 - 'Training Dataset P' & 'Training Dataset M' in [CLIC2020](http://challenge.compression.cc/tasks/)
