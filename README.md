@@ -13,6 +13,13 @@ I wrote this with reference to the following two codes.
 <br>
 
 ## Dataset
+Dataset directory structure.
+├─data
+│  ├─train
+│  ├─test
+│  └─val
+└ ...
+
 I used Flicker2W, DIV2K and CLIC2020's for training.
 - Flicker2W dataset can be found on [liujiaheng's repository](https://github.com/liujiaheng/compression)
 - 'Train data (HR images)' in [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/)
