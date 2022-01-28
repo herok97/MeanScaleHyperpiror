@@ -12,6 +12,13 @@ I wrote this with reference to the following two codes.
 - https://github.com/InterDigitalInc/CompressAI
 <br>
 
+## Model
+The model is Mean-scale hyperprior image compression model using GMM(Gaussian Mixture Model) for entropy model.
+The model has 8 quality hyperparameter lambda, control the trade-off between distortion and bits.
+I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different model.
+4 low quality models use the convolution layers with the number of channnels N=192, M=192 and for 4 high quality models, N=192, M=320
+<br>
+
 ## Dataset
 (In root, create dataset directory structure below.)
 ```
@@ -39,5 +46,16 @@ For validation, you can use any dataset and it is not necessary. (It's not bad c
 ## Training
 You can train the model with command `CUDA_VISIBLE_DEVICES={gpu num} python train.py` at the root directory, so that train.py creates `Solver` class and call the method `train`.
 Before that, you have to modify the `config.py` to suit your purpose.
+<br>
+
+For training 8 different model, firstly train the highest quality(8) model and perform fine-tuning to other models.
+
+<br> 
+Total training steps (batchs): 1400K (until [1100K, 1300K, 1350K, 1400K] train with a learning rate [1e-4, 5e-5, 1e-5, 5e-6, 1e-6])
+For fine-tuning, use the highest quality model's pre-trained weigths until 900K. 
+
 
 ## Evaluation
+You can test the model with command `CUDA_VISIBLE_DEVICES={gpu num} python test.py` at the root directory, so that test.py creates `Solver` class and call the method `test`.
+Before that, you have to modify the `config.py` to suit your purpose.
+<br>
