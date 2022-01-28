@@ -7,7 +7,7 @@ original paper: http://arxiv.org/abs/1809.02736
 **This repository is the implementation of training and evaluation code for the model above. It was written in advance to expand this repository through further research.**
 <br>
 
-I wrote this with reference to the following two codes. 
+I wrote this with reference to the following two codes.
 - https://github.com/liujiaheng/compression 
 - https://github.com/InterDigitalInc/CompressAI
 <br>
