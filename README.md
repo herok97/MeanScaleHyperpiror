@@ -23,7 +23,7 @@ I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different mo
 <br>
 
 ## Dataset
-(In root, create dataset directory structure below.)
+(Create dataset directory structure below.)
 ```
 ├─data
 │  ├─train
