@@ -15,7 +15,8 @@ I wrote this with reference to the following two codes.
 ## Dataset
 Dataset directory structure.
 
-```├─data
+```
+├─data
 │  ├─train
 │  ├─test
 │  └─val
