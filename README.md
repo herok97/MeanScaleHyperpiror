@@ -1,4 +1,4 @@
-# Mean-Scale Hyperprior Image Compression Model (without Context model) 
+## Mean-Scale Hyperprior Image Compression Model (w/o Context model) 
 <br>
 
 ## Introduction
