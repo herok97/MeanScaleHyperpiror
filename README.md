@@ -48,6 +48,7 @@ Before that, you have to modify the `config.py` to suit your purpose.
 <br>
 
 For training 8 different model, firstly train the highest quality(8) model and perform fine-tuning to other models.
+
 Total training steps (batchs): 1400K (until [1100K, 1300K, 1350K, 1400K] train with a learning rate [1e-4, 5e-5, 1e-5, 5e-6, 1e-6])
 For fine-tuning, use the highest quality model's pre-trained weigths until 900K. 
 
