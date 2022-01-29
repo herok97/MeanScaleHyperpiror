@@ -15,7 +15,7 @@ I wrote this with reference to the following two codes.
 ## Model
 The model is Mean-scale hyperprior image compression model using GMM(Gaussian Mixture Model) for entropy model.
 
-The model has 8 quality hyperparameter lambda, control the trade-off between distortion and bits.
+The model has 8 quality hyperparameter lambda, controling the trade-off between distortion and bits.
 
 I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different model.
 
