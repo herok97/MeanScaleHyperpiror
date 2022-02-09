@@ -17,7 +17,7 @@ class Config():
         self.log_step = 250     # logging each 250 steps
         self.total_global_step = 1400000    # total step
         self.lr = 1e-4          # initial learning rate
-        self.quality = 3    # quality = 0, 1, 2, ... , 7
+        self.quality = 7    # quality = 0, 1, 2, ... , 7
 
         # test/validation
         self.save_step = 50000
