@@ -11,23 +11,6 @@ import torch
 from torch import optim
 
 
-def clip_gradient(optimizer, grad_clip):
-    for group in optimizer.param_groups:
-        for param in group["params"]:
-            if param.grad is not None:
-                param.grad.data.clamp_(-grad_clip, grad_clip)
-
-
-def fix_seed(seed):
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
-    torch.cuda.manual_seed_all(seed)
-    torch.backends.cudnn.deterministic = True  # adaptivepooling 사용시 RuntimeError
-    torch.backends.cudnn.benchmark = False
-    np.random.seed(seed)
-    random.seed(seed)
-
-
 class Solver():
     def __init__(self, config, isTrain=True):
         # get config
@@ -295,3 +278,20 @@ class Solver():
     def load_model(self, model, path):
         checkpoint = torch.load(path)
         model.load_state_dict(checkpoint['State_dict'])
+
+
+def clip_gradient(optimizer, grad_clip):
+    for group in optimizer.param_groups:
+        for param in group["params"]:
+            if param.grad is not None:
+                param.grad.data.clamp_(-grad_clip, grad_clip)
+
+
+def fix_seed(seed):
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True  # adaptivepooling 사용시 RuntimeError
+    torch.backends.cudnn.benchmark = False
+    np.random.seed(seed)
+    random.seed(seed)

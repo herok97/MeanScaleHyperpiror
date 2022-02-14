@@ -446,5 +446,6 @@ class MS_SSIM(torch.nn.Module):
                        weights=self.weights)
 
 
+
 if __name__ == '__main__':
     pass

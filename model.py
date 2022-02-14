@@ -149,6 +149,74 @@ def meanScaleHyperprior(quality):
 
     return MeanScaleHyperprior(N, M, lmbdas[quality])
 
+from unet import UNet
+
+class EnhancedMeanScaleHyperprior(MeanScaleHyperprior):
+    def __init__(self, N=192, M=320, lmbda=8192):
+        super().__init__(N=N, M=M, lmbda=lmbda)
+        self.unet = UNet(n_channels=3)
+
+    def forward(self, img):
+        y = self.encode(img)
+
+        if self.training:
+            quant_noise_feature = torch.zeros_like(y).cuda()
+            quant_noise_feature = torch.nn.init.uniform_(torch.zeros_like(quant_noise_feature), -0.5, 0.5)
+            y_hat = y + quant_noise_feature
+        else:
+            y_hat = torch.round(y)
+
+        z = self.priorEncoder(y)
+
+        if self.training:
+            quant_noise_z = torch.zeros_like(z).cuda()
+            quant_noise_z = torch.nn.init.uniform_(torch.zeros_like(quant_noise_z), -0.5, 0.5)
+            z_hat = z + quant_noise_z
+        else:
+            z_hat = torch.round(z)
+
+        mean, scale = self.priorDecoder(z_hat).chunk(2, 1)
+
+        x_hat = self.decode(y_hat)
+        x_hat = self.unet(x_hat)
+
+        # distortion
+        mse_loss = torch.mean((x_hat - img).pow(2))
+        clipped_recon_image = x_hat.clamp(0., 1.)
+
+        def feature_probs_based_sigma(feature, mean, scale):
+            scale = torch.exp(torch.clamp(scale, -20, 20))
+            gaussian = torch.distributions.laplace.Laplace(mean, scale)
+            probs = gaussian.cdf(feature + 0.5) - gaussian.cdf(feature - 0.5)
+            total_bits = torch.sum(torch.clamp(-1.0 * torch.log(probs + 1e-10) / math.log(2.0), 0, 50))
+            return total_bits, probs
+
+        def iclr18_estimate_bits_z(z):
+            prob = self.entropy_model_z(z + 0.5) - self.entropy_model_z(z - 0.5)
+            total_bits = torch.sum(torch.clamp(-1.0 * torch.log(prob + 1e-10) / math.log(2.0), 0, 50))
+            return total_bits, prob
+
+        total_bits_feature, _ = feature_probs_based_sigma(y_hat, mean, scale)
+        total_bits_z, _ = iclr18_estimate_bits_z(z_hat)
+
+        im_shape = img.size()
+        bpp_feature = total_bits_feature / (im_shape[0] * im_shape[2] * im_shape[3])
+        bpp_z = total_bits_z / (im_shape[0] * im_shape[2] * im_shape[3])
+        bpp = bpp_feature + bpp_z
+        return clipped_recon_image, y_hat, mse_loss, bpp_feature, bpp_z, bpp
+
+
+
+def enhanbedMeanScaleHyperprior(quality):
+    lmbdas = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
+    if quality < 4:
+        N = 192
+        M = 192
+    else:
+        N = 192
+        M = 320
+
+    return EnhancedMeanScaleHyperprior(N, M, lmbdas[quality])
 
 if __name__ == '__main__':
     pass
