@@ -13,7 +13,7 @@ I wrote this with reference to the following two codes.
 <br>
 
 ## Model
-The model is Mean-scale hyperprior image compression model using GMM(Gaussian Mixture Model) for entropy model.
+The model is Mean-scale hyperprior image compression model using a GMM(Gaussian Mixture Model) for entropy model instead of GSM(Gaussian Scale Mixture model) in J. Balle's paper.
 
 The model has 8 quality hyperparameter lambda, controling the trade-off between distortion and bits.
 
@@ -37,10 +37,10 @@ I used Flicker2W, DIV2K and CLIC2020 for training. (Flicker2W dataset is suffici
 - 'Train data (HR images)' in [DIV2K](https://data.vision.ee.ethz.ch/cvl/DIV2K/)
 - 'Training Dataset P' & 'Training Dataset M' in [CLIC2020](http://challenge.compression.cc/tasks/)
 
-Data pre-processing for removing JPEG compression artifacts is performed in the training stage Automatically.
+Data pre-processing for removing JPEG compression artifacts is performed in the training stage automatically with customized Dataset class in `basic.py`.
 <br>
 
-For evaluation, i used [Kodak24](http://www.cs.albany.edu/~xypan/research/snr/Kodak.html) dataset.
+For evaluation, i used 24 2K images in [Kodak24](http://www.cs.albany.edu/~xypan/research/snr/Kodak.html) dataset.
 <br>
 
 For validation, you can use any dataset and it is not necessary. (It's not bad comment validation codes)
@@ -54,9 +54,11 @@ Before that, you have to modify the `config.py` to suit your purpose.
 
 For training 8 different model, firstly train the highest quality(8) model and perform fine-tuning to other models.
 
-Total training steps (batches): 1400K (until [1100K, 1300K, 1350K, 1400K], training with a learning rate [1e-4, 5e-5, 1e-5, 5e-6, 1e-6])
+Total training steps (batches): 1400K (until [1100K, 1300K, 1350K, 1400K], training with a learning rate [1e-4, 5e-5, 1e-5, 5e-6, 1e-6]) (it is implemented in the method `train` in `solver.py`)
 
-For fine-tuning, i used the highest quality model's pre-trained weigths until 900K. 
+For fine-tuning, i used the highest quality model's pre-trained weigths until 900K.
+
+The different number of channels between the high-rate model and low-rate model can be solved for fine-tuning with the model loader method in `solver.py`.
 
 
 ## Evaluation
