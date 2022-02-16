@@ -12,6 +12,12 @@ I wrote this with reference to the following two codes.
 - https://github.com/InterDigitalInc/CompressAI
 <br>
 
+## Environment
+
+First, install a `cuda toolkit` and a `cudnn` with correct versions that fit your GPU(s).
+
+Then, install libraries in the `requirements.txt` with this command `pip install -r requirements.txt`
+
 ## Model
 The model is Mean-scale hyperprior image compression model using a GMM(Gaussian Mixture Model) for entropy model instead of GSM(Gaussian Scale Mixture model) in J. Balle's paper.
 
@@ -43,7 +49,7 @@ Data pre-processing for removing JPEG compression artifacts is performed in the 
 For evaluation, i used 24 2K images in [Kodak24](http://www.cs.albany.edu/~xypan/research/snr/Kodak.html) dataset.
 <br>
 
-For validation, you can use any dataset and it is not necessary. (It's not bad comment validation codes)
+For validation, you can use any dataset and it is not necessary. (It is also a good idea to use about 50 images in the training set.)
 <br>
 
 ## Training
