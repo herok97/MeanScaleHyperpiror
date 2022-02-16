@@ -18,15 +18,6 @@ First, install `pytorch`, `cuda toolkit` and a `cudnn` with correct versions tha
 
 Then, install libraries in the `requirements.txt` with this command `pip install -r requirements.txt`
 
-## Model
-The model is Mean-scale hyperprior image compression model using a GMM(Gaussian Mixture Model) for entropy model instead of GSM(Gaussian Scale Mixture model) in J. Balle's paper.
-
-The model has 8 quality hyperparameter lambda, controling the trade-off between distortion and bits.
-
-I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different model.
-
-4 low quality models use the convolution layers with the number of channnels N=192, M=192 and for 4 high quality models, N=192, M=320
-<br>
 
 ## Dataset
 (Create dataset directory structure below.)
@@ -50,6 +41,16 @@ For evaluation, i used 24 2K images in [Kodak24](http://www.cs.albany.edu/~xypan
 <br>
 
 For validation, you can use any dataset and it is not necessary. (It is also a good idea to use about 50 images in the training set.)
+<br>
+
+## Model
+The model is Mean-scale hyperprior image compression model using a GMM(Gaussian Mixture Model) for entropy model instead of GSM(Gaussian Scale Mixture model) in J. Balle's paper.
+
+The model has 8 quality hyperparameter lambda, controling the trade-off between distortion and bits.
+
+I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different model.
+
+4 low quality models use the convolution layers with the number of channnels N=192, M=192 and for 4 high quality models, N=192, M=320
 <br>
 
 ## Training
