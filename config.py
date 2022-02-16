@@ -1,15 +1,17 @@
+import os
+from pathlib import Path
 class Config():
     def __init__(self):
         # Directory
-        self.root_dir = './'
-        self.save_dir = self.root_dir + 'save/'
-        self.result_dir = self.root_dir + 'result/'
-        self.log_dir = self. root_dir + 'log/'
-        self.dataset = self. root_dir + 'data/'
+        self.root_dir = Path(os.getcwd())
+        self.save_dir = self.root_dir / Path('data')
+        self.result_dir = self.root_dir / Path('result')
+        self.log_dir = self. root_dir / Path('log')
+        self.dataset = self. root_dir / Path('data')
 
         # pretrain
         self.pre_train = False
-        self.save_model_dir = self.root_dir + 'save/model.pkl'    # model name
+        self.save_model_dir = self.root_dir / Path('save/model.pkl')    # model name
 
         # training condition
         self.batch_size = 8
