@@ -14,7 +14,7 @@ I wrote this with reference to the following two codes.
 
 ## Environment
 
-First, install a `cuda toolkit` and a `cudnn` with correct versions that fit your GPU(s).
+First, install `pytorch`, `cuda toolkit` and a `cudnn` with correct versions that fit your GPU(s).
 
 Then, install libraries in the `requirements.txt` with this command `pip install -r requirements.txt`
 
