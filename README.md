@@ -54,7 +54,7 @@ I used `lambda = [64, 128, 256, 512, 1024, 2048, 4096, 8192]` for 8 different mo
 <br>
 
 ## Training
-You can train the model with command `CUDA_VISIBLE_DEVICES={gpu num} python train.py` at the root directory, so that train.py creates `Solver` class and call the method `train`.
+You can train the model with command `python train.py` at the root directory, so that train.py creates `Solver` class and call the method `train`.
 
 Before that, you have to modify the `config.py` to suit your purpose.
 <br>
@@ -69,7 +69,9 @@ The different number of channels between the high-rate model and low-rate model 
 
 
 ## Evaluation
-You can test the model with command `CUDA_VISIBLE_DEVICES={gpu num} python test.py` at the root directory, so that test.py creates `Solver` class and call the method `test`.
+You can test the model with command `python test.py` at the root directory, so that test.py creates `Solver` class and call the method `test`.
+
+The test result is saved in `result\test.txt`
 
 Before that, you have to modify the `config.py` to suit your purpose.
 <br>
