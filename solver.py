@@ -166,13 +166,13 @@ class Solver():
                 if self.global_step % self.config.save_step == 0:
                     self.save_checkpoint(epoch, self.imageCompressor, [self.optimizer],
                                          self.global_step,
-                                         self.config.save_dir + str(time.time()).split('.')[0] + '_' + str(
-                                             self.global_step) + '.pkl')
+                                         self.config.save_dir / Path(str(time.time()).split('.')[0] + '_' + str(
+                                             self.global_step) + '.pkl'))
 
                 # test  (saved result folder)
                 if self.global_step % self.config.test_step == 0:
                     print('----------------------TEST--------------------\n')
-                    file = open(self.config.result_dir + f'test{self.global_step}.txt', 'w')
+                    file = open(self.config.result_dir / Path(f'test{self.global_step}.txt'), 'w')
                     file.write(self.test())
                     file.close()
 

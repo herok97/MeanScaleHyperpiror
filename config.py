@@ -4,7 +4,7 @@ class Config():
     def __init__(self):
         # Directory
         self.root_dir = Path(os.getcwd())
-        self.save_dir = self.root_dir / Path('data')
+        self.save_dir = self.root_dir / Path('save')
         self.result_dir = self.root_dir / Path('result')
         self.log_dir = self. root_dir / Path('log')
         self.dataset = self. root_dir / Path('data')

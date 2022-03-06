@@ -91,9 +91,8 @@ class ImageFolder(Dataset):
         """
 
         img = Image.open(self.samples[index]).convert("RGB")
-        if self.mode == 'train':
-            is_jpg = ('jpg' in self.samples[index].__repr__())
-            img = self.resize_crop(img, (256, 256), is_jpg=is_jpg)
+        img = self.resize_crop(img, (256, 256), type=self.mode)
+
         if self.transform:
             return self.transform(img)
         return img
@@ -101,25 +100,47 @@ class ImageFolder(Dataset):
     def __len__(self):
         return len(self.samples)
 
-    def resize_crop(self, img, patch_size, is_jpg=True):
-        patch_x, patch_y = patch_size
-        width, height = img.size
+    def resize_crop(self, img, patch_size, type='train'):
+        if type == 'train':
+            patch_x, patch_y = patch_size
+            width, height = img.size
 
-        random_resize_factor = random.random() * 0.4 + 0.6  # random 0.6 - 1.0 resize
-        crop_size = [round(patch_x / random_resize_factor), round(patch_y / random_resize_factor)]
+            random_resize_factor = random.random() * 0.4 + 0.6  # random 0.6 - 1.0 resize
+            crop_size = [round(patch_x / random_resize_factor), round(patch_y / random_resize_factor)]
 
-        random_crop_x1 = 0 + int(random.random() * (width - crop_size[1] - 2))
-        random_crop_y1 = 0 + int(random.random() * (height - crop_size[0] - 2))
-        random_crop_x2 = random_crop_x1 + crop_size[1]
-        random_crop_y2 = random_crop_y1 + crop_size[0]
+            random_crop_x1 = 0 + int(random.random() * (width - crop_size[1] - 2))
+            random_crop_y1 = 0 + int(random.random() * (height - crop_size[0] - 2))
+            random_crop_x2 = random_crop_x1 + crop_size[1]
+            random_crop_y2 = random_crop_y1 + crop_size[0]
 
-        random_box = (random_crop_x1, random_crop_y1, random_crop_x2, random_crop_y2)
-        randomCropPatch = img.crop(random_box)
+            random_box = (random_crop_x1, random_crop_y1, random_crop_x2, random_crop_y2)
+            randomCropPatch = img.crop(random_box)
 
-        randomCropPatch = randomCropPatch.resize((patch_x, patch_y), Image.BICUBIC)
+            randomCropPatch = randomCropPatch.resize((patch_x, patch_y), Image.BICUBIC)
 
-        return randomCropPatch
+            return randomCropPatch
 
+        elif type == 'val':
+            patch_x, patch_y = patch_size
+            width, height = img.size
+
+            random_resize_factor = random.random() * 0.8  # 0.8 resize
+            crop_size = [round(patch_x / random_resize_factor), round(patch_y / random_resize_factor)]
+
+            random_crop_x1 = 0 + int(0.5 * (width - crop_size[1] - 2))
+            random_crop_y1 = 0 + int(0.5 * (height - crop_size[0] - 2))
+            random_crop_x2 = random_crop_x1 + crop_size[1]
+            random_crop_y2 = random_crop_y1 + crop_size[0]
+
+            random_box = (random_crop_x1, random_crop_y1, random_crop_x2, random_crop_y2)
+            randomCropPatch = img.crop(random_box)
+
+            randomCropPatch = randomCropPatch.resize((patch_x, patch_y), Image.BICUBIC)
+
+            return randomCropPatch
+
+        else:
+            return img
 
 class LowerBound(Function):
     @staticmethod
