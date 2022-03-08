@@ -9,8 +9,10 @@ class MeanScaleHyperprior(nn.Module):
         super(MeanScaleHyperprior, self).__init__()
         self.N = N
         self.M = M
-        self.pad_h = 0
-        self.pad_w = 0
+        self.pad_h1 = 0
+        self.pad_h2 = 0
+        self.pad_w1 = 0
+        self.pad_w2 = 0
         self.lmbda = lmbda
 
         self.Encoder = nn.Sequential(
@@ -104,34 +106,39 @@ class MeanScaleHyperprior(nn.Module):
         h, w = img_shape[2], img_shape[3]
 
         if h % 64 != 0:
-            self.pad_h = (64 - h % 64) // 2
-            pad_h = nn.ReflectionPad2d((0, 0, self.pad_h, self.pad_h,))
+            pad_length = 64 - h % 64
+            self.pad_h1 = pad_length // 2
+            self.pad_h2 = pad_length - pad_length // 2
+            pad_h = nn.ReflectionPad2d((0, 0, self.pad_h1, self.pad_h2,))
             img = pad_h(img)
 
         if w % 64 != 0:
-            self.pad_w = (64 - w % 64) // 2
-            pad_w = nn.ReflectionPad2d((self.pad_w, self.pad_w, 0, 0))
+            pad_length = 64 - h % 64
+            self.pad_w1 = pad_length // 2
+            self.pad_w2 = pad_length - pad_length // 2
+            pad_w = nn.ReflectionPad2d((self.pad_w1, self.pad_w2, 0, 0))
             img = pad_w(img)
 
         return self.Encoder(img)
 
     def decode(self, y_hat):
         img = self.Decoder(y_hat)
-        if self.pad_h == 0:
-            if self.pad_w == 0:
+        if self.pad_h1 + self.pad_h2 == 0:
+            if self.pad_w1 + self.pad_w2 == 0:
                 pass
             else:
-                img = img[:, :, :, self.pad_w:-self.pad_w]
+                img = img[:, :, :, self.pad_w1:-self.pad_w2]
         else:
-            if self.pad_w == 0:
-                img = img[:, :, self.pad_h:-self.pad_h, :]
-
+            if self.pad_w1 + self.pad_w2 == 0:
+                img = img[:, :, self.pad_h1:-self.pad_h2, :]
             else:
-                img = img[:, :, self.pad_h:-self.pad_h, self.pad_w:-self.pad_w]
+                img = img[:, :, self.pad_h1:-self.pad_h2, self.pad_w1:-self.pad_w2]
 
         # initialization padding params
-        self.pad_h = 0
-        self.pad_w = 0
+        self.pad_h1 = 0
+        self.pad_h2 = 0
+        self.pad_w1 = 0
+        self.pad_w2 = 0
         return img
 
     def getLambda(self):
