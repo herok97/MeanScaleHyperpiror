@@ -3,6 +3,7 @@ import math
 
 
 # import torchac
+# import numpy
 
 class MeanScaleHyperprior(nn.Module):
     def __init__(self, N=192, M=320, lmbda=8192):
@@ -85,11 +86,55 @@ class MeanScaleHyperprior(nn.Module):
             gaussian = torch.distributions.laplace.Laplace(mean, scale)
             probs = gaussian.cdf(feature + 0.5) - gaussian.cdf(feature - 0.5)
             total_bits = torch.sum(torch.clamp(-1.0 * torch.log(probs + 1e-10) / math.log(2.0), 0, 50))
+
+            # if not self.training:
+            #     def getrealbitsg(x, gaussian):
+            #         # print("NIPS18noc : mn : ", torch.min(x), " - mx : ", torch.max(x), " range : ", self.mxrange)
+            #         cdfs = []
+            #         x = x + self.mxrange
+            #         n, c, h, w = x.shape
+            #         for i in range(-self.mxrange, self.mxrange):
+            #             cdfs.append(gaussian.cdf(i - 0.5).view(n, c, h, w, 1))
+            #         cdfs = torch.cat(cdfs, 4).cpu().detach()
+            #
+            #         byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
+            #                                                check_input_bounds=True)
+            #
+            #         real_bits = torch.from_numpy(np.array([len(byte_stream) * 8])).float().cuda()
+            #
+            #         sym_out = torchac.decode_float_cdf(cdfs, byte_stream)
+            #
+            #         return sym_out - self.mxrange, real_bits
+            #
+            #     decodedx, real_bits = getrealbitsg(feature, gaussian)
+            #     total_bits = real_bits
+
             return total_bits, probs
 
         def iclr18_estimate_bits_z(z):
             prob = self.entropy_model_z(z + 0.5) - self.entropy_model_z(z - 0.5)
             total_bits = torch.sum(torch.clamp(-1.0 * torch.log(prob + 1e-10) / math.log(2.0), 0, 50))
+
+            # if not self.training:
+            #     def getrealbits(x):
+            #         cdfs = []
+            #         x = x + self.mxrange
+            #         n, c, h, w = x.shape
+            #         for i in range(-self.mxrange, self.mxrange):
+            #             cdfs.append(self.bitEstimator_z(i - 0.5).view(1, c, 1, 1, 1).repeat(1, 1, h, w, 1))
+            #         cdfs = torch.cat(cdfs, 4).cpu().detach()
+            #         byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
+            #                                                check_input_bounds=True)
+            #
+            #         real_bits = torch.sum(torch.from_numpy(np.array([len(byte_stream) * 8])).float().cuda())
+            #
+            #         sym_out = torchac.decode_float_cdf(cdfs, byte_stream)
+            #
+            #         return sym_out - self.mxrange, real_bits
+            #
+            #     decodedx, real_bits = getrealbits(z)
+            #     total_bits = real_bits
+
             return total_bits, prob
 
         total_bits_feature, _ = feature_probs_based_sigma(y_hat, mean, scale)
@@ -156,7 +201,9 @@ def meanScaleHyperprior(quality):
 
     return MeanScaleHyperprior(N, M, lmbdas[quality])
 
+
 from unet import UNet
+
 
 class EnhancedMeanScaleHyperprior(MeanScaleHyperprior):
     def __init__(self, N=192, M=320, lmbda=8192):
@@ -239,7 +286,6 @@ class EnhancedMeanScaleHyperprior(MeanScaleHyperprior):
         return clipped_recon_image, y_hat, mse_loss, bpp_feature, bpp_z, bpp
 
 
-
 def enhanbedMeanScaleHyperprior(quality):
     lmbdas = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
     if quality < 4:
@@ -250,6 +296,7 @@ def enhanbedMeanScaleHyperprior(quality):
         M = 320
 
     return EnhancedMeanScaleHyperprior(N, M, lmbdas[quality])
+
 
 if __name__ == '__main__':
     pass
