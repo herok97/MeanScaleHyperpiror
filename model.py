@@ -242,41 +242,61 @@ class EnhancedMeanScaleHyperprior(MeanScaleHyperprior):
         clipped_recon_image = x_hat.clamp(0., 1.)
 
         def feature_probs_based_sigma(feature, mean, scale):
-            # def getrealbitsg(x, gaussian):
-            #     print("NIPS18noc : mn : ", torch.min(x), " - mx : ", torch.max(x), " range : ", self.mxrange)
-            #     cdfs = []
-            #     x = x + self.mxrange
-            #     n, c, h, w = x.shape
-            #     if type is 'y':
-            #         for i in range(-self.mxrange, self.mxrange):
-            #             cdfs.append(gaussian.cdf(i - 0.5).view(n, c, h, w, 1))
-            #     else:
-            #         for i in range(-self.mxrange, self.mxrange):
-            #             cdfs.append(gaussian.cdf(i - 0.5).view(1, c, 1, 1, 1).repeat(1, 1, h, w, 1))
-            #     cdfs = torch.cat(cdfs, 4).cpu().detach()
-            #
-            #     byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
-            #                                            check_input_bounds=True)
-            #
-            #     real_bits = torch.from_numpy(np.array([len(byte_stream) * 8])).float().cuda()
-            #
-            #     sym_out = torchac.decode_float_cdf(cdfs, byte_stream)
-            #
-            #     return sym_out - self.mxrange, real_bits
-
             scale = torch.exp(torch.clamp(scale, -20, 20))
             gaussian = torch.distributions.laplace.Laplace(mean, scale)
             probs = gaussian.cdf(feature + 0.5) - gaussian.cdf(feature - 0.5)
             total_bits = torch.sum(torch.clamp(-1.0 * torch.log(probs + 1e-10) / math.log(2.0), 0, 50))
 
             # if not self.training:
+            #     def getrealbitsg(x, gaussian):
+            #         # print("NIPS18noc : mn : ", torch.min(x), " - mx : ", torch.max(x), " range : ", self.mxrange)
+            #         cdfs = []
+            #         x = x + self.mxrange
+            #         n, c, h, w = x.shape
+            #         for i in range(-self.mxrange, self.mxrange):
+            #             i = torch.tensor(i)    # <- 추가
+            #             cdfs.append(gaussian.cdf(i - 0.5).view(n, c, h, w, 1))
+            #         cdfs = torch.cat(cdfs, 4).cpu().detach()
+            #
+            #         byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
+            #                                                check_input_bounds=True)
+            #
+            #         real_bits = torch.from_numpy(np.array([len(byte_stream) * 8])).float().cuda()
+            #
+            #         sym_out = torchac.decode_float_cdf(cdfs, byte_stream)
+            #
+            #         return sym_out - self.mxrange, real_bits
+            #
             #     decodedx, real_bits = getrealbitsg(feature, gaussian)
             #     total_bits = real_bits
+
             return total_bits, probs
 
         def iclr18_estimate_bits_z(z):
             prob = self.entropy_model_z(z + 0.5) - self.entropy_model_z(z - 0.5)
             total_bits = torch.sum(torch.clamp(-1.0 * torch.log(prob + 1e-10) / math.log(2.0), 0, 50))
+
+            # if not self.training:
+            #     def getrealbits(x):
+            #         cdfs = []
+            #         x = x + self.mxrange
+            #         n, c, h, w = x.shape
+            #         for i in range(-self.mxrange, self.mxrange):
+            #             i = torch.tensor(i)      # <- 추가
+            #             cdfs.append(self.entropy_model_z(i - 0.5).view(1, c, 1, 1, 1).repeat(1, 1, h, w, 1))
+            #         cdfs = torch.cat(cdfs, 4).cpu().detach()
+            #         byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
+            #                                                check_input_bounds=True)
+            #
+            #         real_bits = torch.sum(torch.from_numpy(np.array([len(byte_stream) * 8])).float().cuda())
+            #
+            #         sym_out = torchac.decode_float_cdf(cdfs, byte_stream)
+            #
+            #         return sym_out - self.mxrange, real_bits
+            #
+            #     decodedx, real_bits = getrealbits(z)
+            #     total_bits = real_bits
+
             return total_bits, prob
 
         total_bits_feature, _ = feature_probs_based_sigma(y_hat, mean, scale)
