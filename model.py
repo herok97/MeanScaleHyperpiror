@@ -14,6 +14,7 @@ class MeanScaleHyperprior(nn.Module):
         self.pad_h2 = 0
         self.pad_w1 = 0
         self.pad_w2 = 0
+        self.mxrange = 150
         self.lmbda = lmbda
 
         self.Encoder = nn.Sequential(
