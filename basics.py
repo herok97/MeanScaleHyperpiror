@@ -124,7 +124,7 @@ class ImageFolder(Dataset):
             patch_x, patch_y = patch_size
             width, height = img.size
 
-            random_resize_factor = random.random() * 0.8  # 0.8 resize
+            random_resize_factor = random.random() * 0.4 + 0.6  # random 0.6 - 1.0 resize
             crop_size = [round(patch_x / random_resize_factor), round(patch_y / random_resize_factor)]
 
             random_crop_x1 = 0 + int(0.5 * (width - crop_size[1] - 2))
