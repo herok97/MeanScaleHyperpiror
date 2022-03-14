@@ -124,7 +124,7 @@ class MeanScaleHyperprior(nn.Module):
             #         n, c, h, w = x.shape
             #         for i in range(-self.mxrange, self.mxrange):
             #             i = torch.tensor(i)      # <- 추가
-            #             cdfs.append(self.bitEstimator_z(i - 0.5).view(1, c, 1, 1, 1).repeat(1, 1, h, w, 1))
+            #             cdfs.append(self.entropy_model_z(i - 0.5).view(1, c, 1, 1, 1).repeat(1, 1, h, w, 1))
             #         cdfs = torch.cat(cdfs, 4).cpu().detach()
             #         byte_stream = torchac.encode_float_cdf(cdfs, x.cpu().detach().to(torch.int16),
             #                                                check_input_bounds=True)
