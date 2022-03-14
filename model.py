@@ -161,7 +161,7 @@ class MeanScaleHyperprior(nn.Module):
             img = pad_h(img)
 
         if w % 64 != 0:
-            pad_length = 64 - h % 64
+            pad_length = 64 - w % 64
             self.pad_w1 = pad_length // 2
             self.pad_w2 = pad_length - pad_length // 2
             pad_w = nn.ReflectionPad2d((self.pad_w1, self.pad_w2, 0, 0))
