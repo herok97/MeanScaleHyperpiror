@@ -1,13 +1,13 @@
 from basics import *
 import math
-
-
 # import torchac
 # import numpy as np
+from unet import UNet
 
-class MeanScaleHyperprior(nn.Module):
+
+class EnhancedMeanScaleHyperprior(nn.Module):
     def __init__(self, N=192, M=320, lmbda=8192):
-        super(MeanScaleHyperprior, self).__init__()
+        super(EnhancedMeanScaleHyperprior, self).__init__()
         self.N = N
         self.M = M
         self.pad_h1 = 0
@@ -54,6 +54,9 @@ class MeanScaleHyperprior(nn.Module):
         )
 
         self.entropy_model_z = BitEstimator(N)
+
+        #------------------ postprocessing model ------------------
+        self.unet = UNet(n_channels=3, N=M) # called in self.decode()
 
     def forward(self, img):
         y = self.encode(img)
@@ -171,6 +174,7 @@ class MeanScaleHyperprior(nn.Module):
 
     def decode(self, y_hat):
         img = self.Decoder(y_hat)
+        img = self.unet(img)
         if self.pad_h1 + self.pad_h2 == 0:
             if self.pad_w1 + self.pad_w2 == 0:
                 pass
@@ -192,8 +196,7 @@ class MeanScaleHyperprior(nn.Module):
     def getLambda(self):
         return self.lmbda
 
-
-def meanScaleHyperprior(quality):
+def enhanbedMeanScaleHyperprior(quality):
     lmbdas = [64, 128, 256, 512, 1024, 2048, 4096, 8192]
     if quality < 4:
         N = 192
@@ -202,7 +205,7 @@ def meanScaleHyperprior(quality):
         N = 192
         M = 320
 
-    return MeanScaleHyperprior(N, M, lmbdas[quality])
+    return EnhancedMeanScaleHyperprior(N, M, lmbdas[quality])
 
 
 if __name__ == '__main__':

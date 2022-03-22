@@ -6,25 +6,25 @@ import torch.nn.functional as F
 
 
 class UNet(nn.Module):
-    def __init__(self, n_channels=3):
+    def __init__(self, n_channels=3, N=256):
         super(UNet, self).__init__()
-        self.down1 = DoubleConv(n_channels, 64)
-        self.down2 = DoubleConv(64, 128)
-        self.down3 = DoubleConv(128, 256)
-        self.down4 = DoubleConv(256, 512)
+        self.down1 = DoubleConv(n_channels, N // 4)
+        self.down2 = DoubleConv(N // 4, N // 2)
+        self.down3 = DoubleConv(N // 2, N)
+        self.down4 = DoubleConv(N, 2 * N)
 
         self.inter = nn.Sequential(
-            nn.Conv2d(512, 1024, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(2 * N, 4 * N, kernel_size=3, stride=1, padding=1),
             nn.LeakyReLU(inplace=True),
-            nn.Conv2d(1024, 1024, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(4 * N, 4 * N, kernel_size=3, stride=1, padding=1),
             nn.LeakyReLU(inplace=True),
         )
 
-        self.up1 = Up(1024, 512)
-        self.up2 = Up(512, 256)
-        self.up3 = Up(256, 128)
-        self.up4 = Up(128, 64)
-        self.out = nn.Conv2d(64, n_channels, kernel_size=3, stride=1, padding=1)
+        self.up1 = Up(4 * N, 2 * N)
+        self.up2 = Up(2 * N, N)
+        self.up3 = Up(N, N // 2)
+        self.up4 = Up(N // 2, N // 4)
+        self.out = nn.Conv2d(N // 4, n_channels, kernel_size=3, stride=1, padding=1)
 
         self.maxpool = nn.MaxPool2d(2)
 
@@ -36,10 +36,10 @@ class UNet(nn.Module):
         x2 = self.down2(x1_pooled)
         x2_pooled = self.maxpool(x2)
 
-        x3 = self.down2(x2_pooled)
+        x3 = self.down3(x2_pooled)
         x3_pooled = self.maxpool(x3)
 
-        x4 = self.down2(x3_pooled)
+        x4 = self.down4(x3_pooled)
         x4_pooled = self.maxpool(x4)
 
         x5 = self.inter(x4_pooled)
