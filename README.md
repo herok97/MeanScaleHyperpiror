@@ -37,7 +37,7 @@ I used Flicker2W, DIV2K and CLIC2020 for training. (Flicker2W dataset is suffici
 Data pre-processing for removing JPEG compression artifacts is performed in the training stage automatically with customized Dataset class in `basic.py`.
 <br>
 
-For evaluation, i used 24 2K images in [Kodak24](http://www.cs.albany.edu/~xypan/research/snr/Kodak.html) dataset.
+For evaluation, i used 24 images in [Kodak24](http://www.cs.albany.edu/~xypan/research/snr/Kodak.html) dataset.
 <br>
 
 For validation, you can use any dataset and it is not necessary. (It is also a good idea to use about 50 images in the training set.)
